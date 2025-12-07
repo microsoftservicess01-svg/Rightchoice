@@ -1,0 +1,44 @@
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>BraFit — Full Stack Static</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>BraFit</h1>
+    <p class="small">All computation & optional encryption happen in your browser. Nothing is uploaded or stored on the server.</p>
+
+    <div class="grid">
+      <div><label>Underbust (band) cm<br/><input id="band" type="number"></label></div>
+      <div><label>Full bust (bust) cm<br/><input id="bust" type="number"></label></div>
+    </div>
+
+    <div class="grid mt">
+      <div><label>Activity<br/>
+        <select id="activity"><option value="daily">Daily / Casual</option><option value="sports">Sports</option><option value="sleep">Sleep</option></select>
+      </label></div>
+      <div><label>Root width<br/>
+        <select id="root"><option value="narrow">Narrow</option><option value="average">Average</option><option value="wide">Wide</option></select>
+      </label></div>
+    </div>
+
+    <div class="mt"><label>Encryption passphrase (local, optional)<br/><input id="passphrase" type="password" placeholder="used to derive key on-device"></label></div>
+
+    <div class="buttons mt">
+      <button id="compute">Compute & Download Encrypted</button>
+      <button id="reset">Reset</button>
+    </div>
+
+    <div class="mt" id="status">Status: Ready</div>
+    <div id="result" class="mt"></div>
+
+    <div class="foot mt small">This static build performs all calculations client-side and downloads an encrypted JSON for testing.</div>
+  </div>
+
+<script src="app.js"></script>
+</body>
+</html>
