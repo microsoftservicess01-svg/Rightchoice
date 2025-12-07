@@ -3,176 +3,165 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>BraFit — results with images & shop links</title>
+  <title>BraFit — images & shop links (improved)</title>
 
   <style>
-    /* Page background (change URL to any image you prefer) */
-    body {
-      margin: 0;
-      font-family: "Helvetica Neue", Arial, sans-serif;
-      background-image: url('https://images.unsplash.com/photo-1503342452485-86f7ef7b0f6b?auto=format&fit=crop&w=1600&q=80');
+    :root{
+      --accent:#0b66ff;
+      --muted:#6b7280;
+    }
+    html,body{height:100%;margin:0;font-family:Inter, "Helvetica Neue", Arial, sans-serif;}
+    /* full-page background image */
+    body{
+      background-image:
+        linear-gradient( rgba(255,255,255,0.92), rgba(255,255,255,0.92) ),
+        url('https://images.unsplash.com/photo-1519838260405-292c3a6d7fda?auto=format&fit=crop&w=1800&q=80');
       background-size: cover;
-      background-position: center;
-      background-attachment: fixed;
-      color: #111;
+      background-position: center center;
+      color:#111;
       -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
     }
 
-    /* translucent centered card */
-    .container {
-      max-width: 920px;
-      margin: 36px auto;
-      background: rgba(255,255,255,0.95);
-      border-radius: 12px;
-      padding: 28px;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    /* centered card with subtle transparency so bg shows through */
+    .container{
+      max-width:960px;
+      margin:28px auto;
+      background: rgba(255,255,255,0.96);
+      border-radius:12px;
+      box-shadow:0 10px 30px rgba(0,0,0,0.12);
+      overflow:hidden;
     }
 
-    h1 { margin: 0 0 8px 0; font-size: 32px; }
-    .muted { color:#666; margin-bottom: 18px; }
+    /* header/banner with title on top of the background (slightly darker) */
+    .hero{
+      display:flex;
+      align-items:center;
+      gap:16px;
+      padding:18px 22px;
+      background: linear-gradient( rgba(10,10,10,0.06), rgba(10,10,10,0.02) );
+      border-bottom: 1px solid rgba(0,0,0,0.04);
+    }
+    .hero h1{ margin:0; font-size:24px; }
+    .hero p{ margin:0; color:var(--muted); font-size:13px; }
 
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      align-items: center;
+    .content{ padding:18px 22px; }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap:12px;
     }
 
-    input[type="number"], select, input[type="text"] {
-      width: 100%;
-      padding: 12px 10px;
-      border-radius: 8px;
-      border: 1px solid #ddd;
-      box-sizing: border-box;
-      font-size: 15px;
-    }
-
-    .actions { margin-top: 14px; display:flex; gap:12px; }
-    .btn {
-      padding: 12px 18px;
-      border-radius: 8px;
-      text-decoration: none;
-      display:inline-block;
-      background:#0b66ff;
-      color:#fff;
-      border: none;
-      cursor: pointer;
-      font-weight:600;
-    }
-    .btn.secondary { background: #e7eaf6; color: #0b66ff; font-weight:600; }
-
-    /* Results area */
-    .results {
-      margin-top: 22px;
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 18px;
-    }
-
-    .result-card {
+    label{ font-size:14px; color:#111; display:block; margin-bottom:6px; }
+    input[type="number"], select {
+      width:100%; padding:10px 12px; border-radius:8px; border:1px solid #e6e6e9; font-size:14px;
       background: #fff;
-      border-radius: 10px;
-      padding: 16px;
-      box-shadow: 0 6px 18px rgba(10,10,10,0.06);
-      display: grid;
-      grid-template-columns: 1fr 2fr;
-      gap: 14px;
-      align-items: start;
+      box-sizing: border-box;
     }
 
-    .image-column {
-      display:flex;
-      flex-direction: column;
-      gap: 10px;
+    .actions{ margin-top:14px; display:flex; gap:12px; align-items:center; }
+    .btn{ padding:10px 14px; border-radius:8px; border:none; cursor:pointer; font-weight:600; }
+    .btn.primary{ background:var(--accent); color:#fff; }
+    .btn.ghost{ background:transparent; border:1px solid #e6e6e9; color:var(--accent); }
+
+    #status{ margin-top:12px; font-weight:600; color:#111; }
+
+    /* results */
+    .results{ margin-top:18px; display:flex; flex-direction:column; gap:16px; }
+
+    .result-card{
+      display:grid;
+      grid-template-columns: 220px 1fr;
+      gap:14px;
+      background:#fff;
+      border-radius:10px;
+      padding:14px;
+      box-shadow:0 6px 18px rgba(0,0,0,0.04);
+      align-items:start;
     }
 
-    .thumb {
-      width: 100%;
-      height: 160px;
-      object-fit: cover;
-      border-radius: 8px;
-      border: 1px solid #eee;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+    .thumbs{ display:flex; flex-direction:column; gap:8px; }
+    .thumb{
+      width:100%; height:120px; object-fit:cover; border-radius:8px; border:1px solid #f0f0f0;
+      background: linear-gradient(90deg,#f7f7fb,#fff);
     }
+    .thumb .label{ display:block; font-size:12px; color:var(--muted); margin-top:6px; text-align:center; }
 
-    .links {
-      display:flex;
-      gap: 8px;
-      margin-top:6px;
+    .info h2{ margin:0 0 6px 0; font-size:18px; }
+    .info p{ margin:0; color:var(--muted); font-size:13px; }
+
+    .links{ display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
+    .store-link{
+      padding:8px 12px; border-radius:8px; font-weight:700; text-decoration:none; color:#fff; font-size:13px;
     }
+    .store-link.amazon{ background:#ff9900; }
+    .store-link.flipkart{ background:#2874f0; }
+    .store-link.myntra{ background:#e83f6f; }
 
-    .store-link {
-      flex:1;
-      text-align:center;
-      padding:8px 10px;
-      border-radius:8px;
-      text-decoration:none;
-      font-weight:600;
-      font-size:14px;
-      border:1px solid transparent;
-    }
-    .store-link.amazon { background:#ff9900; color:#fff; }
-    .store-link.flipkart { background:#2874f0; color:#fff; }
-    .store-link.myntra { background:#e83f6f; color:#fff; }
-
-    .info {
-      padding: 4px 2px;
-    }
-
-    @media (max-width:720px){
-      .grid { grid-template-columns: 1fr; }
-      .result-card { grid-template-columns: 1fr; }
-      .thumb { height: 200px; }
+    /* responsive */
+    @media (max-width:820px){
+      .grid{ grid-template-columns: 1fr; }
+      .result-card{ grid-template-columns: 1fr; }
+      .thumb{ height:180px; }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>BraFit</h1>
-    <div class="muted">All computation happens in your browser. (Removed optional encryption field.)</div>
-
-    <div class="grid">
-      <label>
-        Underbust (band) cm
-        <input id="band" type="number" value="78" min="50" max="120" />
-      </label>
-
-      <label>
-        Full bust (bust) cm
-        <input id="bust" type="number" value="90" min="60" max="140" />
-      </label>
-
-      <label>
-        Activity
-        <select id="activity">
-          <option>Daily / Casual</option>
-          <option>Sports / Active</option>
-          <option>High Impact</option>
-        </select>
-      </label>
-
-      <label>
-        Root width
-        <select id="root">
-          <option>Narrow</option>
-          <option>Normal</option>
-          <option>Wide</option>
-        </select>
-      </label>
+    <div class="hero">
+      <div>
+        <h1>BraFit</h1>
+        <p>All computation happens in your browser. (Encryption removed.)</p>
+      </div>
     </div>
 
-    <div class="actions">
-      <button id="computeBtn" class="btn">Compute</button>
-      <button id="resetBtn" class="btn secondary">Reset</button>
+    <div class="content">
+      <div class="grid">
+        <div>
+          <label>Underbust (band) cm
+            <input id="band" type="number" value="78" min="50" max="120" />
+          </label>
+        </div>
+        <div>
+          <label>Full bust (bust) cm
+            <input id="bust" type="number" value="90" min="60" max="140" />
+          </label>
+        </div>
+
+        <div>
+          <label>Activity
+            <select id="activity">
+              <option>Daily / Casual</option>
+              <option>Sports / Active</option>
+              <option>High Impact</option>
+            </select>
+          </label>
+        </div>
+
+        <div>
+          <label>Root width
+            <select id="root">
+              <option>Narrow</option>
+              <option>Normal</option>
+              <option>Wide</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button id="computeBtn" class="btn primary">Compute</button>
+        <button id="resetBtn" class="btn ghost">Reset</button>
+        <div id="status">Status: Ready</div>
+      </div>
+
+      <div id="results" class="results" aria-live="polite"></div>
     </div>
-
-    <div id="status" style="margin-top:12px; color:#333; font-weight:600;">Status: Ready</div>
-
-    <div id="results" class="results" aria-live="polite"></div>
   </div>
 
   <script>
-    // Helper: build store search URLs for a product query
+    // Build store search URLs
     function buildStoreUrls(query) {
       const q = encodeURIComponent(query);
       return {
@@ -182,17 +171,41 @@
       };
     }
 
-    // Helper: fetch "real" images from Unsplash Source by query.
-    // Unsplash Source returns a relevant image for the query.
-    // (No API key required; images are random-ish but relevant.)
-    function unsplashImage(width, height, query) {
-      const q = encodeURIComponent(query);
-      return `https://source.unsplash.com/${width}x${height}/?${q}`;
+    // Multi-source image URL generator with cache-buster
+    function imageCandidates(query, width=600, height=400) {
+      const t = Date.now();
+      const qEnc = encodeURIComponent(query);
+      // Candidate order: Unsplash Source, Wikimedia (generic), Picsum, placeholder via data URI
+      return [
+        // Unsplash Source (may be blocked in some environments)
+        `https://source.unsplash.com/${width}x${height}/?${qEnc}&cb=${t}`,
+        // Picsum seeded image (reliable)
+        `https://picsum.photos/seed/${encodeURIComponent(query + t)}/${width}/${height}`,
+        // Wikimedia generic 'bra' image search fallback (not guaranteed; using commons redirects not available),
+        // so we use a simple static image hosted on unsplash (specific id) as extra fallback
+        `https://images.unsplash.com/photo-1520975914532-6f8f1b8f6b63?auto=format&fit=crop&w=${width}&q=60`,
+        // final fallback: 1x1 svg data uri showing text (very small)
+        `data:image/svg+xml;utf8,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='${width}' height='${height}'><rect width='100%' height='100%' fill='%23f3f4f6'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%239ca3af' font-size='20'>Image unavailable</text></svg>`)}`,
+      ];
+    }
+
+    // Attempt to set image src from candidates with onerror fallback
+    function setImageWithFallback(imgEl, candidates) {
+      let i = 0;
+      function tryNext() {
+        if (i >= candidates.length) return;
+        imgEl.src = candidates[i++];
+      }
+      imgEl.onerror = function() {
+        // small delay then try next
+        setTimeout(tryNext, 120);
+      };
+      // start
+      tryNext();
     }
 
     function computeSizing(band, bust) {
-      // Example simple logic: compute cup size and suggested bra name
-      const diff = Math.max(0, bust - band);
+      const diff = Math.max(0, Math.round(bust - band));
       let cup = "A";
       if (diff >= 12 && diff < 14) cup = "B";
       if (diff >= 14 && diff < 16) cup = "C";
@@ -206,104 +219,87 @@
     function renderResults(productName, sizeSuggestion) {
       const resultsEl = document.getElementById('results');
       resultsEl.innerHTML = '';
-
-      // We'll create one result card per "source set" with 3 images (to compare).
       const card = document.createElement('div');
       card.className = 'result-card';
 
-      // Image column: three thumbnails from Unsplash with slightly different queries
       const imgCol = document.createElement('div');
-      imgCol.className = 'image-column';
+      imgCol.className = 'thumbs';
 
+      // 3 thumbnails with slightly different queries
       const queries = [
-        `${productName} bra front`,
-        `${productName} bra side`,
-        `${productName} lingerie closeup`
+        `${productName} front view`,
+        `${productName} side view`,
+        `${productName} closeup`
       ];
 
-      const widths = [600,600,600];
-      const heights = [400,400,400];
-
-      queries.forEach((q, idx) => {
+      queries.forEach(q => {
         const img = document.createElement('img');
         img.className = 'thumb';
-        // Use Unsplash source to get a real photo that matches query.
-        img.src = unsplashImage(widths[idx], heights[idx], q);
-        img.alt = `${productName} image ${idx+1}`;
+        img.alt = q;
+        // set via fallback mechanism
+        const cands = imageCandidates(q, 600, 400);
+        setImageWithFallback(img, cands);
         imgCol.appendChild(img);
       });
 
-      // Info column: details + links
       const infoCol = document.createElement('div');
       infoCol.className = 'info';
 
       const title = document.createElement('h2');
-      title.textContent = productName + ' — Suggested size: ' + sizeSuggestion.size;
-      title.style.marginTop = '0';
-      title.style.marginBottom = '6px';
+      title.textContent = `${productName} — Suggested size: ${sizeSuggestion.size}`;
       infoCol.appendChild(title);
 
-      const p = document.createElement('p');
-      p.innerHTML = `<strong>Band:</strong> ${document.getElementById('band').value} cm &nbsp; <strong>Bust:</strong> ${document.getElementById('bust').value} cm<br>
-                     <strong>Cup difference:</strong> ${sizeSuggestion.cupDiff} cm`;
-      infoCol.appendChild(p);
+      const details = document.createElement('p');
+      details.innerHTML = `<strong>Band:</strong> ${document.getElementById('band').value} cm &nbsp; <strong>Bust:</strong> ${document.getElementById('bust').value} cm<br>
+                           <strong>Cup difference:</strong> ${sizeSuggestion.cupDiff} cm`;
+      infoCol.appendChild(details);
 
-      // Store links (Amazon, Flipkart, Myntra) -> open to search results that match the image/product.
+      // store links
       const urls = buildStoreUrls(productName);
+      const links = document.createElement('div');
+      links.className = 'links';
 
-      const linksRow = document.createElement('div');
-      linksRow.className = 'links';
+      const aA = document.createElement('a');
+      aA.className = 'store-link amazon';
+      aA.href = urls.amazon; aA.target = '_blank'; aA.textContent = 'View on Amazon';
+      links.appendChild(aA);
 
-      const aAmazon = document.createElement('a');
-      aAmazon.className = 'store-link amazon';
-      aAmazon.href = urls.amazon;
-      aAmazon.textContent = 'View on Amazon';
-      aAmazon.target = '_blank';
-      linksRow.appendChild(aAmazon);
+      const aF = document.createElement('a');
+      aF.className = 'store-link flipkart';
+      aF.href = urls.flipkart; aF.target = '_blank'; aF.textContent = 'View on Flipkart';
+      links.appendChild(aF);
 
-      const aFlip = document.createElement('a');
-      aFlip.className = 'store-link flipkart';
-      aFlip.href = urls.flipkart;
-      aFlip.textContent = 'View on Flipkart';
-      aFlip.target = '_blank';
-      linksRow.appendChild(aFlip);
+      const aM = document.createElement('a');
+      aM.className = 'store-link myntra';
+      aM.href = urls.myntra; aM.target = '_blank'; aM.textContent = 'View on Myntra';
+      links.appendChild(aM);
 
-      const aMyntra = document.createElement('a');
-      aMyntra.className = 'store-link myntra';
-      aMyntra.href = urls.myntra;
-      aMyntra.textContent = 'View on Myntra';
-      aMyntra.target = '_blank';
-      linksRow.appendChild(aMyntra);
+      infoCol.appendChild(links);
 
-      infoCol.appendChild(linksRow);
-
-      // Combine
       card.appendChild(imgCol);
       card.appendChild(infoCol);
       resultsEl.appendChild(card);
     }
 
-    // Wire up actions
-    document.getElementById('computeBtn').addEventListener('click', function () {
+    document.getElementById('computeBtn').addEventListener('click', () => {
       const band = parseFloat(document.getElementById('band').value) || 0;
       const bust = parseFloat(document.getElementById('bust').value) || 0;
       const activity = document.getElementById('activity').value;
       const root = document.getElementById('root').value;
 
-      document.getElementById('status').textContent = 'Status: Computing...';
+      const status = document.getElementById('status');
+      status.textContent = 'Status: Computing...';
 
-      // Example productName generation from size & attributes
-      // You can replace with your real product classifier
       const sizeSuggestion = computeSizing(band, bust);
       let productName = `Comfort ${sizeSuggestion.size} ${activity} bra`;
       if (root === 'Wide') productName = `Full coverage ${sizeSuggestion.size} bra`;
 
-      // Render results with images and store links
+      // render
       renderResults(productName, sizeSuggestion);
-      document.getElementById('status').textContent = 'Status: Done — results shown below.';
+      status.textContent = 'Status: Done — results shown below.';
     });
 
-    document.getElementById('resetBtn').addEventListener('click', function () {
+    document.getElementById('resetBtn').addEventListener('click', () => {
       document.getElementById('band').value = 78;
       document.getElementById('bust').value = 90;
       document.getElementById('activity').value = 'Daily / Casual';
@@ -312,9 +308,8 @@
       document.getElementById('status').textContent = 'Status: Ready';
     });
 
-    // Optional: initial compute
-    //document.getElementById('computeBtn').click();
+    // optional: auto compute on first load
+    // document.getElementById('computeBtn').click();
   </script>
 </body>
 </html>
-
