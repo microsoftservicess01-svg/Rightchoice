@@ -1,44 +1,320 @@
-
 <!doctype html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>BraFit — Full Stack Static</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BraFit — results with images & shop links</title>
+
+  <style>
+    /* Page background (change URL to any image you prefer) */
+    body {
+      margin: 0;
+      font-family: "Helvetica Neue", Arial, sans-serif;
+      background-image: url('https://images.unsplash.com/photo-1503342452485-86f7ef7b0f6b?auto=format&fit=crop&w=1600&q=80');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      color: #111;
+      -webkit-font-smoothing:antialiased;
+    }
+
+    /* translucent centered card */
+    .container {
+      max-width: 920px;
+      margin: 36px auto;
+      background: rgba(255,255,255,0.95);
+      border-radius: 12px;
+      padding: 28px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    }
+
+    h1 { margin: 0 0 8px 0; font-size: 32px; }
+    .muted { color:#666; margin-bottom: 18px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      align-items: center;
+    }
+
+    input[type="number"], select, input[type="text"] {
+      width: 100%;
+      padding: 12px 10px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      box-sizing: border-box;
+      font-size: 15px;
+    }
+
+    .actions { margin-top: 14px; display:flex; gap:12px; }
+    .btn {
+      padding: 12px 18px;
+      border-radius: 8px;
+      text-decoration: none;
+      display:inline-block;
+      background:#0b66ff;
+      color:#fff;
+      border: none;
+      cursor: pointer;
+      font-weight:600;
+    }
+    .btn.secondary { background: #e7eaf6; color: #0b66ff; font-weight:600; }
+
+    /* Results area */
+    .results {
+      margin-top: 22px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+
+    .result-card {
+      background: #fff;
+      border-radius: 10px;
+      padding: 16px;
+      box-shadow: 0 6px 18px rgba(10,10,10,0.06);
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .image-column {
+      display:flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .thumb {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid #eee;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+    }
+
+    .links {
+      display:flex;
+      gap: 8px;
+      margin-top:6px;
+    }
+
+    .store-link {
+      flex:1;
+      text-align:center;
+      padding:8px 10px;
+      border-radius:8px;
+      text-decoration:none;
+      font-weight:600;
+      font-size:14px;
+      border:1px solid transparent;
+    }
+    .store-link.amazon { background:#ff9900; color:#fff; }
+    .store-link.flipkart { background:#2874f0; color:#fff; }
+    .store-link.myntra { background:#e83f6f; color:#fff; }
+
+    .info {
+      padding: 4px 2px;
+    }
+
+    @media (max-width:720px){
+      .grid { grid-template-columns: 1fr; }
+      .result-card { grid-template-columns: 1fr; }
+      .thumb { height: 200px; }
+    }
+  </style>
 </head>
 <body>
   <div class="container">
     <h1>BraFit</h1>
-    <p class="small">All computation & optional encryption happen in your browser. Nothing is uploaded or stored on the server.</p>
+    <div class="muted">All computation happens in your browser. (Removed optional encryption field.)</div>
 
     <div class="grid">
-      <div><label>Underbust (band) cm<br/><input id="band" type="number"></label></div>
-      <div><label>Full bust (bust) cm<br/><input id="bust" type="number"></label></div>
+      <label>
+        Underbust (band) cm
+        <input id="band" type="number" value="78" min="50" max="120" />
+      </label>
+
+      <label>
+        Full bust (bust) cm
+        <input id="bust" type="number" value="90" min="60" max="140" />
+      </label>
+
+      <label>
+        Activity
+        <select id="activity">
+          <option>Daily / Casual</option>
+          <option>Sports / Active</option>
+          <option>High Impact</option>
+        </select>
+      </label>
+
+      <label>
+        Root width
+        <select id="root">
+          <option>Narrow</option>
+          <option>Normal</option>
+          <option>Wide</option>
+        </select>
+      </label>
     </div>
 
-    <div class="grid mt">
-      <div><label>Activity<br/>
-        <select id="activity"><option value="daily">Daily / Casual</option><option value="sports">Sports</option><option value="sleep">Sleep</option></select>
-      </label></div>
-      <div><label>Root width<br/>
-        <select id="root"><option value="narrow">Narrow</option><option value="average">Average</option><option value="wide">Wide</option></select>
-      </label></div>
+    <div class="actions">
+      <button id="computeBtn" class="btn">Compute</button>
+      <button id="resetBtn" class="btn secondary">Reset</button>
     </div>
 
-    <div class="mt"><label>Encryption passphrase (local, optional)<br/><input id="passphrase" type="password" placeholder="used to derive key on-device"></label></div>
+    <div id="status" style="margin-top:12px; color:#333; font-weight:600;">Status: Ready</div>
 
-    <div class="buttons mt">
-      <button id="compute">Compute & Download Encrypted</button>
-      <button id="reset">Reset</button>
-    </div>
-
-    <div class="mt" id="status">Status: Ready</div>
-    <div id="result" class="mt"></div>
-
-    <div class="foot mt small">This static build performs all calculations client-side and downloads an encrypted JSON for testing.</div>
+    <div id="results" class="results" aria-live="polite"></div>
   </div>
 
-<script src="app.js"></script>
+  <script>
+    // Helper: build store search URLs for a product query
+    function buildStoreUrls(query) {
+      const q = encodeURIComponent(query);
+      return {
+        amazon: `https://www.amazon.in/s?k=${q}`,
+        flipkart: `https://www.flipkart.com/search?q=${q}`,
+        myntra: `https://www.myntra.com/search?q=${q}`
+      };
+    }
+
+    // Helper: fetch "real" images from Unsplash Source by query.
+    // Unsplash Source returns a relevant image for the query.
+    // (No API key required; images are random-ish but relevant.)
+    function unsplashImage(width, height, query) {
+      const q = encodeURIComponent(query);
+      return `https://source.unsplash.com/${width}x${height}/?${q}`;
+    }
+
+    function computeSizing(band, bust) {
+      // Example simple logic: compute cup size and suggested bra name
+      const diff = Math.max(0, bust - band);
+      let cup = "A";
+      if (diff >= 12 && diff < 14) cup = "B";
+      if (diff >= 14 && diff < 16) cup = "C";
+      if (diff >= 16 && diff < 18) cup = "D";
+      if (diff >= 18) cup = "DD/E";
+      const bandRounded = Math.round(band / 5) * 5;
+      const size = `${bandRounded}${cup}`;
+      return { size, cupDiff: diff };
+    }
+
+    function renderResults(productName, sizeSuggestion) {
+      const resultsEl = document.getElementById('results');
+      resultsEl.innerHTML = '';
+
+      // We'll create one result card per "source set" with 3 images (to compare).
+      const card = document.createElement('div');
+      card.className = 'result-card';
+
+      // Image column: three thumbnails from Unsplash with slightly different queries
+      const imgCol = document.createElement('div');
+      imgCol.className = 'image-column';
+
+      const queries = [
+        `${productName} bra front`,
+        `${productName} bra side`,
+        `${productName} lingerie closeup`
+      ];
+
+      const widths = [600,600,600];
+      const heights = [400,400,400];
+
+      queries.forEach((q, idx) => {
+        const img = document.createElement('img');
+        img.className = 'thumb';
+        // Use Unsplash source to get a real photo that matches query.
+        img.src = unsplashImage(widths[idx], heights[idx], q);
+        img.alt = `${productName} image ${idx+1}`;
+        imgCol.appendChild(img);
+      });
+
+      // Info column: details + links
+      const infoCol = document.createElement('div');
+      infoCol.className = 'info';
+
+      const title = document.createElement('h2');
+      title.textContent = productName + ' — Suggested size: ' + sizeSuggestion.size;
+      title.style.marginTop = '0';
+      title.style.marginBottom = '6px';
+      infoCol.appendChild(title);
+
+      const p = document.createElement('p');
+      p.innerHTML = `<strong>Band:</strong> ${document.getElementById('band').value} cm &nbsp; <strong>Bust:</strong> ${document.getElementById('bust').value} cm<br>
+                     <strong>Cup difference:</strong> ${sizeSuggestion.cupDiff} cm`;
+      infoCol.appendChild(p);
+
+      // Store links (Amazon, Flipkart, Myntra) -> open to search results that match the image/product.
+      const urls = buildStoreUrls(productName);
+
+      const linksRow = document.createElement('div');
+      linksRow.className = 'links';
+
+      const aAmazon = document.createElement('a');
+      aAmazon.className = 'store-link amazon';
+      aAmazon.href = urls.amazon;
+      aAmazon.textContent = 'View on Amazon';
+      aAmazon.target = '_blank';
+      linksRow.appendChild(aAmazon);
+
+      const aFlip = document.createElement('a');
+      aFlip.className = 'store-link flipkart';
+      aFlip.href = urls.flipkart;
+      aFlip.textContent = 'View on Flipkart';
+      aFlip.target = '_blank';
+      linksRow.appendChild(aFlip);
+
+      const aMyntra = document.createElement('a');
+      aMyntra.className = 'store-link myntra';
+      aMyntra.href = urls.myntra;
+      aMyntra.textContent = 'View on Myntra';
+      aMyntra.target = '_blank';
+      linksRow.appendChild(aMyntra);
+
+      infoCol.appendChild(linksRow);
+
+      // Combine
+      card.appendChild(imgCol);
+      card.appendChild(infoCol);
+      resultsEl.appendChild(card);
+    }
+
+    // Wire up actions
+    document.getElementById('computeBtn').addEventListener('click', function () {
+      const band = parseFloat(document.getElementById('band').value) || 0;
+      const bust = parseFloat(document.getElementById('bust').value) || 0;
+      const activity = document.getElementById('activity').value;
+      const root = document.getElementById('root').value;
+
+      document.getElementById('status').textContent = 'Status: Computing...';
+
+      // Example productName generation from size & attributes
+      // You can replace with your real product classifier
+      const sizeSuggestion = computeSizing(band, bust);
+      let productName = `Comfort ${sizeSuggestion.size} ${activity} bra`;
+      if (root === 'Wide') productName = `Full coverage ${sizeSuggestion.size} bra`;
+
+      // Render results with images and store links
+      renderResults(productName, sizeSuggestion);
+      document.getElementById('status').textContent = 'Status: Done — results shown below.';
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', function () {
+      document.getElementById('band').value = 78;
+      document.getElementById('bust').value = 90;
+      document.getElementById('activity').value = 'Daily / Casual';
+      document.getElementById('root').value = 'Narrow';
+      document.getElementById('results').innerHTML = '';
+      document.getElementById('status').textContent = 'Status: Ready';
+    });
+
+    // Optional: initial compute
+    //document.getElementById('computeBtn').click();
+  </script>
 </body>
 </html>
+
